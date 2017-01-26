@@ -6,7 +6,7 @@
 setwd("/Users/daro/Documents/GitHub/IG-analysis") # change depending on where your xlsx file is.
 
 # loading the package called "xlsx" to work with Excel spreadsheets
-install.packages("xlsx")
+# install.packages("xlsx")
 library(xlsx)
 
 # loading in the data into an object called "data"
@@ -218,17 +218,17 @@ dev.off()
 
 png("Barplot.Caption.png")
 plot(caption, main = "Assessment of Picture Caption", ylab = "Frequency", ylim = c(0,15),
-     col = c("turquoise", "coral"))
+     col = c("turquoise", "coral", "pink"))
 dev.off()
 
 png("Barplot.Hashtag.png")
 plot(hashtag, main = "Number of Hashtags", ylab = "Frequency", ylim = c(0,20),
-     col = c("turquoise", "coral"))
+     col = c("turquoise", "coral", "pink"))
 dev.off()
 
 png("Barplot.Place.png")
 plot(place, main = "Assessment of Place", ylab = "Frequency", ylim = c(0,15),
-     col = c("turquoise", "coral"))
+     col = c("turquoise", "coral", "pink"))
 dev.off()
 
 
@@ -281,14 +281,14 @@ png("Boxplot.interactionsANDplace.png")
 boxplot(n.interactions ~ place, 
         main = "Number of interactions according to assessment of place",
         ylab = "Frequency",
-        col = c("turquoise", "coral"))
+        col = c("turquoise", "coral", "pink"))
 dev.off()
 
 png("Boxplot.newFollowersANDcaption.png")
 boxplot(n.new.followers ~ caption, 
         main = "Number of New Followers according to type of caption",
         ylab = "Frequency",
-        col = c("turquoise", "coral"))
+        col = c("turquoise", "coral", "pink"))
 dev.off()
 
 png("Boxplot.interactionsANDanford.png")
@@ -302,7 +302,7 @@ png("Boxplot.likesANDhashtags.png")
 boxplot(n.likes ~ hashtag, 
         main = "Number of likes according to number of hashtags",
         ylab = "Frequency",
-        col = c("turquoise", "coral"))
+        col = c("turquoise", "coral", "pink"))
 dev.off()
 
 
@@ -314,15 +314,15 @@ dev.off()
 # create table 1a: numerical variables
 # summary values (median, ...)
 table1a.labels <- c("Variable", "Median", "IQR")
-row1 <- cbind("Total Followers", median(n.followers), IQR(n.followers))
-row2 <- cbind("New Followers", median(new.followers), IQR(new.followers))
+row1 <- cbind("Total Followers", median(n.total.followers), IQR(n.total.followers))
+row2 <- cbind("New Followers", median(n.new.followers), IQR(n.new.followers))
 row3 <- cbind("Total Posts", median(n.total.posts), IQR(n.total.posts))
 row4 <- cbind("New Posts", median(n.new.posts), IQR(n.new.posts))
 row5 <- cbind("Comments", median(n.comments), IQR(n.comments))
 row6 <- cbind("Likes", median(n.likes), IQR(n.likes))
 row7 <- cbind("Interactions", median(n.interactions), IQR(n.interactions))
 row8 <- cbind("Media Value", median(media.value), IQR(media.value))
-table1a <- rbind(labels, row1, row2, row3, row4, row5, row6, row7, row8)
+table1a <- rbind(table1a.labels, row1, row2, row3, row4, row5, row6, row7, row8)
 table1a
 write.xlsx(table1a, "table1a.xlsx") # write it to a xlsx file
 
@@ -341,7 +341,7 @@ write.xlsx(table1b, "table1b.xlsx") # write it to a xlsx file and fix it later
 
 # create table 2: matrix of correlations
 # correlation matrix
-df <- data.frame(n.followers, new.followers, n.total.posts, n.new.posts, n.comments, n.likes, n.interactions, media.value)
+df <- data.frame(n.total.followers, n.new.followers, n.total.posts, n.new.posts, n.comments, n.likes, n.interactions, media.value)
 round(cor(df, method = "kendall"),2) # get correlations (returns matrix)
 write.xlsx(round(cor(df, method = "kendall"),2), "cormatrix.xlsx") # writes matrix to a xlsx file
 
@@ -396,6 +396,10 @@ cor.test(media.value, n.interactions, method = "kendall") # 0.75 p = 5.056e-11 *
 # 4. more interactions <->  more new followers  =======> YES, somehow, bc cor coef 0.58 and significant p = 1.705e-06
 # 5. more comments <->  more likes              =======> YES, HIGH!, bc cor coef 0.70 and significant p = 4.755e-08
 
+# according to our data, the number of new posts and the number of new followers seem to follow a positive and significant correlation (r = 0.31, p-value = 0.0152).
+
+# according to our data, we would reject null hypotheses number 1b to 5 in favor of the alternative due to positive and significant correlation (see Table 4). However, there is not enough evidence to reject the null hypothesis number 1a (r = -0.14, p-value = 0.2871)
+
 #----
 
 # install.packages("psych")
@@ -437,10 +441,13 @@ kruskal.test(caption, n.new.followers) # non-significant
 wilcox.test(n.interactions ~ anford) # non-significant
 kruskal.test(hashtag, n.likes) # non-significant
 
+
+
+
 # TO DO: Table of this
 
 #----
-# Table 3
+# Table 3a
 
 # model1: what variables determine the increase of new.followers?
 # create full model (don't include n.interactions because it is redundant with n.comments and n.likes)
@@ -464,6 +471,34 @@ write.xlsx(table3a, "best.model1.xlsx") # write to a xlsx file
 glance(best.model1) # get rest of stats as a data frame
 AIC(best.model1)
 
+#---
+
+# Table 3b
+
+# model2: what variables determine the increase of n.interactions?
+# create full model (don't include n.interactions because it is redundant with n.comments and n.likes)
+full.model2 <- lm(n.interactions ~ n.total.followers + n.new.followers + n.total.posts + media.value + place + caption + anford + hashtag)
+summary(full.model2)
+
+# model selection (using AIC = Akaike's Information Criterion and step-wise regression)
+# install.packages("MASS") # install package MASS
+library(MASS) # load package MASS
+stepAIC(full.model2) # says the best model should be n.new.followers ~ n.comments + n.likes + place + anford + hashtag
+
+best.model2 <- lm(n.interactions ~ n.total.followers + n.new.followers + 
+                    n.total.posts + media.value)
+summary(best.model2) # display results
+
+# better display results:
+install.packages("broom") # install package broom
+library(broom) # load package broom
+table3b <- tidy(best.model2) # get coefficient table as a data frame
+table3b <- table3b[,c(-3,-4)] # delete columns we don't care about
+write.xlsx(table3b, "best.model1.xlsx") # write to a xlsx file
+glance(best.model2) # get rest of stats as a data frame
+AIC(best.model2)
+
+
 #-----
 # END OF SCRIPT
 #-----
@@ -477,7 +512,7 @@ AIC(best.model1)
   # univariate DONE
   # bivariate DONE
 # bivariate tests DONE
-# Table for bivariate analysis of hypotheses 6-9 (manually)
+# Table for bivariate analysis of hypotheses 6-9 (manually) DONE - sort of
 # model with everything DONE 
 
 
