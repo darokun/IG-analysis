@@ -35,37 +35,6 @@ str(data)
 # hist(data$Follower, breaks = 15)
 # median(data$Follower)
 
-# build hashtag variable
-ht <- c(0.956521739, 0.666666667, 0.451923077,
-        0.948717949, 1.185185185, 2.333333333,
-        0.71875, 2.421052632, 4.139534884,
-        0.37254902, 1.025, 1.901639344,
-        5.40625, 0.613636364, 0.962962963,
-        0.515151515, 3.565217391, 2.297297297,
-        0.780821918, 1.885714286, 0.333333333,
-        0.769230769, 0.882352941, 0.43877551,
-        2.444444444, 2, 3.25,
-        3.173333333, 1.133333333, 2.517241379)
-
-# 3 levels:
-# # recode hashtag variable
-# hashtag <- NULL                         # new empty vector
-# hashtag[ht <= 2] <- 1                   # First level: 0-2
-# hashtag[ht >= 2.01 & ht <= 4] <- 2      # Second level: 2.01-4
-# hashtag[ht >= 4.01 & ht <= 6] <- 3      # Third level: 4.01-6
-# hashtag.labels <- c("wenige", "mittel", "viele")
-# hashtag <- as.factor(hashtag, labels = hashtag.labels)  # Convert into factor
-# summary(hashtag)                        # check variable
-
-# 2 levels:
-# # recode hashtag variable
-hashtag <- NULL                     # new empty vector
-hashtag[ht <= 3] <- 0               # First level: 0-3
-hashtag[ht > 3] <- 1                # Second level: 3.01-6
-hashtag.labels <- c("wenige", "viele")
-hashtag <- factor(hashtag, labels = hashtag.labels)
-summary(hashtag)                    # check variable
-
 # convert column names into objects I can easily remember
 # the number in brackets points to column number on the spreadsheet
 blog.name <- data[,1]
@@ -82,6 +51,7 @@ caption.labels <- c("sachlich", "unterhaltend", "werbend")
 place.labels <- c("langweilig", "interessant", "sehr interessant")
 anford <- factor(data[,10], labels = anford.labels) # 0 = nein, 1 = ja
 caption <- factor(data[,11], labels = caption.labels) # 1 = sachlich, 2 = unterhaltend, 3 = werbend
+hashtag <- factor(data[,12],  labels = hashtag.labels) # 1= wenige (0-2), 2=mittel (2.01-4) 3= viele (4.01-6)
 place <- factor(data[,13], labels = place.labels) # 1=langweilig, 2= interessant 3= sehr interessant
  
 # collect new data for new followers:
