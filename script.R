@@ -324,7 +324,7 @@ row7 <- cbind("Interactions", median(n.interactions), IQR(n.interactions))
 row8 <- cbind("Media Value", median(media.value), IQR(media.value))
 table1a <- rbind(table1a.labels, row1, row2, row3, row4, row5, row6, row7, row8)
 table1a
-write.xlsx(table1a, "table1a.xlsx") # write it to a xlsx file
+#write.xlsx(table1a, "table1a.xlsx") # write it to a xlsx file
 
 # create table 1b: categorical variables
 # absolute and relative numbers:
@@ -335,7 +335,7 @@ row11 <- cbind("Hashtags", table(hashtag), round(prop.table(table(hashtag)),2)*1
 row12 <- cbind("Place", table(place), round(prop.table(table(place)),2)*100)
 table1b <- rbind(table1b.labels, row9, row10, row11, row12)
 table1b
-write.xlsx(table1b, "table1b.xlsx") # write it to a xlsx file and fix it later
+#write.xlsx(table1b, "table1b.xlsx") # write it to a xlsx file and fix it later
 
 #---
 
@@ -343,7 +343,7 @@ write.xlsx(table1b, "table1b.xlsx") # write it to a xlsx file and fix it later
 # correlation matrix
 df <- data.frame(n.total.followers, n.new.followers, n.total.posts, n.new.posts, n.comments, n.likes, n.interactions, media.value)
 round(cor(df, method = "kendall"),2) # get correlations (returns matrix)
-write.xlsx(round(cor(df, method = "kendall"),2), "cormatrix.xlsx") # writes matrix to a xlsx file
+#write.xlsx(round(cor(df, method = "kendall"),2), "cormatrix.xlsx") # writes matrix to a xlsx file
 
 # correlation with n.followers
 cor.test(new.followers, n.followers, method = "kendall") # 0.49 p = 7.096e-05 ***
@@ -392,7 +392,7 @@ cor.test(media.value, n.interactions, method = "kendall") # 0.75 p = 5.056e-11 *
 # 1a. more total posts <-> more total followers =======> NO, because correlation coef -0.14 and non-significant p = 0.2871
 # 1b. more new posts <-> more new followers     =======> YES, slightly, bc cor coef 0.31 and significant p = 0.0152
 # 2. more interactions <->  more media value    =======> YES, HIGH!, bc cor coef 0.75 and significant p = 5.056e-11
-# 3. more new posts <->  more new likes         =======> YES, slightly, bc cor coef 0.31 and significant p = 0.0152
+# 3. more new posts <->  more new likes         =======> No. The correlation is just low-medium, and non-significant (r = 0.23, p-value = 0.08).
 # 4. more interactions <->  more new followers  =======> YES, somehow, bc cor coef 0.58 and significant p = 1.705e-06
 # 5. more comments <->  more likes              =======> YES, HIGH!, bc cor coef 0.70 and significant p = 4.755e-08
 
@@ -504,15 +504,6 @@ AIC(best.model2)
 #-----
 
 # to do:
-# codebuch DONE
-# descriptive stats for new variables DONE
-  # univariate DONE
-  # bivariate DONE
-# boxplots or barplots for individual variables DONE
-  # univariate DONE
-  # bivariate DONE
-# bivariate tests DONE
-# Table for bivariate analysis of hypotheses 6-9 (manually) DONE - sort of
-# model with everything DONE 
+# tables aesthetics
 
 
