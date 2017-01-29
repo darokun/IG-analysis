@@ -46,11 +46,12 @@ n.comments <- data[,6]
 n.likes <- data[,7]
 n.interactions <- data[,8]
 media.value <- data[,9]
-anford.labels <- c("nein", "ja")
+aufford.labels <- c("nein", "ja")
 caption.labels <- c("sachlich", "unterhaltend", "werbend")
 place.labels <- c("langweilig", "interessant", "sehr interessant")
-anford <- factor(data[,10], labels = anford.labels) # 0 = nein, 1 = ja
+aufford <- factor(data[,10], labels = aufford.labels) # 0 = nein, 1 = ja
 caption <- factor(data[,11], labels = caption.labels) # 1 = sachlich, 2 = unterhaltend, 3 = werbend
+hashtag.labels <- c("wenige", "mittel", "viele")
 hashtag <- factor(data[,12],  labels = hashtag.labels) # 1= wenige (0-2), 2=mittel (2.01-4) 3= viele (4.01-6)
 place <- factor(data[,13], labels = place.labels) # 1=langweilig, 2= interessant 3= sehr interessant
  
@@ -115,26 +116,7 @@ place <- factor(data[,13], labels = place.labels) # 1=langweilig, 2= interessant
 #                    1137, 1889, 3198, 3808, 4572, 3653,
 #                    2367, 2140, 2680, 4255, 788, 980)
 
-# # add the new.followers object into the database:
-# data[,8] <- new.followers
-# data[,9] <- n.total.posts
-# colnames(data)[8] <- "New Followers" # assign new variable name
-# colnames(data)[9] <- "Total Posts" # assign new variable name
-# 
-# # create objects with names I can easily remember
-# blog.name <- data[,1]        # blogger username on IG
-# n.followers <- data[,2]      # total number of followers
-# n.new.posts <- data[,3]      # number of new posts
-# n.comments <- data[,4]       # number of comments
-# n.likes <- data[,5]          # number of likes
-# n.interactions <- data[,6]   # number of interactions (comments + likes)
-# media.value <- data[,7]      # media value per post
-
 #---
-
-# create a new excel file with the new columns (new followers and total posts)
-# write.xlsx(data, "RohblattInstagram2.xlsx")
-
 # UNIVARIATE ANALYSIS (JUST ONE VARIABLE AT THE TIME)
 # checking if variables are normally distributed:
 hist(n.total.followers, breaks=15) # non-normal
@@ -200,8 +182,8 @@ boxplot(media.value, main = "Boxplot of Media Value",
         ylab = "US Dollars")
 dev.off()
 
-png("Barplot.Anforderungen.png")
-plot(anford, main = "Anforderungen", ylab = "Frequency", ylim = c(0,20),
+png("Barplot.aufforderungen.png")
+plot(aufford, main = "Aufforderungen", ylab = "Frequency", ylim = c(0,20),
      col = c("turquoise", "coral"))
 dev.off()
 
@@ -263,7 +245,7 @@ abline(lm(n.likes ~ n.comments), col="red") # looks very likely
 # new hypotheses:
 # 6. if place is more interesting <=> more interactions
 # 7. if the caption is more into advertising <=> less [new] followers
-# 8. if anford is yes <=> more interactions
+# 8. if aufford is yes <=> more interactions
 # 9. if more hashtags <=> more likes
 
 png("Boxplot.interactionsANDplace.png")
@@ -280,9 +262,9 @@ boxplot(n.new.followers ~ caption,
         col = c("turquoise", "coral", "pink"))
 dev.off()
 
-png("Boxplot.interactionsANDanford.png")
-boxplot(n.interactions ~ anford, 
-        main = "Number of interactions according to Anforderungen",
+png("Boxplot.interactionsANDaufford.png")
+boxplot(n.interactions ~ aufford, 
+        main = "Number of interactions according to Aufforderungen",
         ylab = "Frequency",
         col = c("turquoise", "coral"))
 dev.off()
@@ -318,7 +300,7 @@ table1a
 # create table 1b: categorical variables
 # absolute and relative numbers:
 table1b.labels <- c("Variable", "Frequency", "Percentage")
-row9 <- cbind("Anforderungen", table(anford), round(prop.table(table(anford)),2)*100)
+row9 <- cbind("aufforderungen", table(aufford), round(prop.table(table(aufford)),2)*100)
 row10 <- cbind("Caption", table(caption), round(prop.table(table(caption)),2)*100)
 row11 <- cbind("Hashtags", table(hashtag), round(prop.table(table(hashtag)),2)*100)
 row12 <- cbind("Place", table(place), round(prop.table(table(place)),2)*100)
@@ -402,12 +384,12 @@ describeBy(n.new.followers, caption)
 # median new followers by caption: 
 # sachlich = 4502.5, unterhaltend = 1850, werbend = 3915
 
-describeBy(n.interactions, anford) 
-# median interaction by anford: 
+describeBy(n.interactions, aufford) 
+# median interaction by aufford: 
 # nein = 9445, ja = 5360
 
 describeBy(n.likes, hashtag) 
-# median interaction by anford: 
+# median interaction by aufford: 
 # wenige = 5750, mittel = 3595, viele = 23086
 
 # tests of proportions
@@ -415,7 +397,7 @@ describeBy(n.likes, hashtag)
 # new hypotheses:
 # 6. if place is more interesting <=> more interactions
 # 7. if the caption is more into advertising <=> less [new] followers
-# 8. if anford is yes <=> more interactions
+# 8. if aufford is yes <=> more interactions
 # 9. if more hashtags <=> more likes
 
 # choose hypothesis test depending on type of variables:
@@ -427,29 +409,24 @@ describeBy(n.likes, hashtag)
 # run tests:
 kruskal.test(place, n.interactions) # non-significant
 kruskal.test(caption, n.new.followers) # non-significant
-wilcox.test(n.interactions ~ anford) # non-significant
+wilcox.test(n.interactions ~ aufford) # non-significant
 kruskal.test(hashtag, n.likes) # non-significant
-wilcox.test(n.likes ~ hashtag) # non-significant
 
-
-
-
-# TO DO: Table of this
 
 #----
 # Table 3a
 
 # model1: what variables determine the increase of new.followers?
 # create full model (don't include n.interactions because it is redundant with n.comments and n.likes)
-full.model1 <- lm(n.new.followers ~ n.total.followers + n.total.posts + n.comments + n.likes + media.value + place + caption + anford + hashtag)
+full.model1 <- lm(n.new.followers ~ n.total.followers + n.total.posts + n.comments + n.likes + media.value + place + caption + aufford + hashtag)
 summary(full.model1)
 
 # model selection (using AIC = Akaike's Information Criterion and step-wise regression)
 # install.packages("MASS") # install package MASS
 library(MASS) # load package MASS
-stepAIC(full.model1) # says the best model should be n.new.followers ~ n.comments + n.likes + place + anford + hashtag
+stepAIC(full.model1) # says the best model should be n.new.followers ~ n.comments + n.likes + place + aufford + hashtag
 
-best.model1 <- lm(n.new.followers ~ n.comments + n.likes + place + anford + hashtag)
+best.model1 <- lm(n.new.followers ~ n.comments + n.likes + place + aufford + hashtag)
 summary(best.model1) # display results
 
 # better display results:
@@ -467,12 +444,12 @@ AIC(best.model1)
 
 # model2: what variables determine the increase of n.interactions?
 # create full model (don't include n.interactions because it is redundant with n.comments and n.likes)
-full.model2 <- lm(n.interactions ~ n.total.followers + n.new.followers + n.total.posts + media.value + place + caption + anford + hashtag)
+full.model2 <- lm(n.interactions ~ n.total.followers + n.new.followers + n.total.posts + media.value + place + caption + aufford + hashtag)
 summary(full.model2)
 
 # model selection (using AIC = Akaike's Information Criterion and step-wise regression)
 # install.packages("MASS") # install package MASS
-stepAIC(full.model2) # says the best model should be n.new.followers ~ n.comments + n.likes + place + anford + hashtag
+stepAIC(full.model2) # says the best model should be n.new.followers ~ n.comments + n.likes + place + aufford + hashtag
 
 best.model2 <- lm(n.interactions ~ n.total.followers + n.new.followers + 
                     n.total.posts + media.value)
@@ -489,10 +466,3 @@ AIC(best.model2)
 #-----
 # END OF SCRIPT
 #-----
-
-# to do:
-# tables aesthetics DONE
-# check levels of hashtag
-
-
-
