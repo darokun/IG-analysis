@@ -284,7 +284,7 @@ dev.off()
 # Table 1
 # create table 1a: numerical variables
 # summary values (median, ...)
-table1a.labels <- c("Variable", "Median", "IQR")
+table1.labels <- c("Variable", "Median", "IQR")
 row1 <- cbind("Total Followers", median(n.total.followers), IQR(n.total.followers))
 row2 <- cbind("New Followers", median(n.new.followers), IQR(n.new.followers))
 row3 <- cbind("Total Posts", median(n.total.posts), IQR(n.total.posts))
@@ -293,24 +293,24 @@ row5 <- cbind("Comments", median(n.comments), IQR(n.comments))
 row6 <- cbind("Likes", median(n.likes), IQR(n.likes))
 row7 <- cbind("Interactions", median(n.interactions), IQR(n.interactions))
 row8 <- cbind("Media Value", median(media.value), IQR(media.value))
-table1a <- rbind(table1a.labels, row1, row2, row3, row4, row5, row6, row7, row8)
+table1 <- rbind(table1a.labels, row1, row2, row3, row4, row5, row6, row7, row8)
 table1a
-#write.xlsx(table1a, "table1a.xlsx") # write it to a xlsx file
+#write.xlsx(table1, "table1.xlsx") # write it to a xlsx file
 
-# create table 1b: categorical variables
+# create table 2: categorical variables
 # absolute and relative numbers:
-table1b.labels <- c("Variable", "Frequency", "Percentage")
+table2.labels <- c("Variable", "Frequency", "Percentage")
 row9 <- cbind("aufforderungen", table(aufford), round(prop.table(table(aufford)),2)*100)
 row10 <- cbind("Caption", table(caption), round(prop.table(table(caption)),2)*100)
 row11 <- cbind("Hashtags", table(hashtag), round(prop.table(table(hashtag)),2)*100)
 row12 <- cbind("Place", table(place), round(prop.table(table(place)),2)*100)
-table1b <- rbind(table1b.labels, row9, row10, row11, row12)
-table1b
-#write.xlsx(table1b, "table1b.xlsx") # write it to a xlsx file and fix it later
+table2 <- rbind(table2.labels, row9, row10, row11, row12)
+table2
+#write.xlsx(table2, "table2.xlsx") # write it to a xlsx file and fix it later
 
 #---
 
-# create table 2: matrix of correlations
+# create table 3: matrix of correlations
 # correlation matrix
 df <- data.frame(n.total.followers, n.new.followers, n.total.posts, n.new.posts, n.comments, n.likes, n.interactions, media.value)
 round(cor(df, method = "kendall"),2) # get correlations (returns matrix)
@@ -414,7 +414,7 @@ kruskal.test(hashtag, n.likes) # non-significant
 
 
 #----
-# Table 3a
+# Table 5
 
 # model1: what variables determine the increase of new.followers?
 # create full model (don't include n.interactions because it is redundant with n.comments and n.likes)
@@ -440,7 +440,7 @@ AIC(best.model1)
 
 #---
 
-# Table 3b
+# Table 6
 
 # model2: what variables determine the increase of n.interactions?
 # create full model (don't include n.interactions because it is redundant with n.comments and n.likes)
